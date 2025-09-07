@@ -357,24 +357,6 @@
       margin-left: 8px;
     }
     
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 16px 24px;
-      border-radius: 10px;
-      background: var(--success);
-      color: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-      z-index: 1000;
-    }
-    
-    .notification.show {
-      transform: translateX(0);
-    }
-    
     .print-actions {
       display: flex;
       justify-content: center;
@@ -670,7 +652,7 @@
       <div class="print-actions">
         <button class="btn" onclick="window.print()">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <polyline points="6 9 6 2 18 2 18 9"></line>
             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
             <rect x="6" y="14" width="12" height="8"></rect>
           </svg>
@@ -687,8 +669,6 @@
       </div>
     </section>
   </div>
-
-  <div class="notification" id="notification">Facture enregistrée avec succès!</div>
 
   <script>
     // Utility functions
@@ -710,18 +690,6 @@
     
     // DOM elements
     const tbody = document.querySelector('#linesTable tbody');
-    const notification = el('notification');
-    
-    // Show notification
-    function showNotification(message, type = 'success') {
-      notification.textContent = message;
-      notification.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-      notification.classList.add('show');
-      
-      setTimeout(() => {
-        notification.classList.remove('show');
-      }, 3000);
-    }
     
     // Add a new line to the items table
     function addLine(data = {}) {
@@ -740,7 +708,6 @@
       tr.querySelector('.del').addEventListener('click', () => { 
         tr.remove(); 
         recalcAll(); 
-        showNotification('Ligne supprimée', 'danger');
       });
       
       recalcLine({ currentTarget: tr.querySelector('.qty') });
@@ -831,9 +798,9 @@
         invoiceData.createdAt = new Date().toISOString();
         invoices.push(invoiceData);
         localStorage.setItem('invoices', JSON.stringify(invoices));
-        showNotification('Facture enregistrée avec succès!');
+        alert('Facture enregistrée avec succès!');
       } catch (e) {
-        showNotification('Erreur lors de l\'enregistrement', 'danger');
+        alert('Erreur lors de l\'enregistrement');
         console.error(e);
       }
     }
@@ -842,20 +809,17 @@
     function bindEvents() {
       el('addLine').addEventListener('click', () => {
         addLine();
-        showNotification('Nouvelle ligne ajoutée');
       });
       
       el('clearLines').addEventListener('click', () => { 
         if (confirm('Êtes-vous sûr de vouloir supprimer toutes les lignes?')) {
           tbody.innerHTML=''; 
           recalcAll(); 
-          showNotification('Toutes les lignes ont été supprimées', 'danger');
         }
       });
       
       el('updatePreview').addEventListener('click', () => {
         syncHeaderAndRecalc();
-        showNotification('Aperçu actualisé');
       });
       
       el('printBtn').addEventListener('click', () => {
@@ -877,7 +841,6 @@
           });
           tbody.innerHTML = '';
           syncHeaderAndRecalc();
-          showNotification('Formulaire réinitialisé', 'danger');
         }
       });
       
