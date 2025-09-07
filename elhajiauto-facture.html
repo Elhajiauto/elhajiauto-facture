@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>El Haji Auto Facture</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --accent: #0ea5e9;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --ink: #0f172a;
+      --ink-light: #334155;
+      --muted: #64748b;
+      --muted-light: #94a3b8;
+      --border: #e2e8f0;
+      --background: #f8fafc;
+      --card: #ffffff;
+      --shadow: rgba(2, 6, 23, 0.08);
+    }
+    
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    body { 
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; 
+      color: var(--ink); 
+      background: var(--background); 
+      line-height: 1.6;
+    }
+    
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 24px 16px; 
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+    
+    header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+    
+    .card { 
+      background: var(--card); 
+      border: 1px solid var(--border); 
+      border-radius: 16px; 
+      box-shadow: 0 4px 16px var(--shadow); 
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    
+    .card h2 { 
+      margin: 0; 
+      padding: 20px 24px; 
+      border-bottom: 1px solid var(--border); 
+      color: var(--ink); 
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .card h2 svg {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .grid { 
+      display: grid; 
+      gap: 16px; 
+    }
+    
+    .grid.cols-3 { 
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    }
+    
+    .grid.cols-2 { 
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    }
+    
+    label { 
+      font-size: 14px; 
+      color: var(--muted); 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: 500;
+    }
+    
+    input, select, textarea { 
+      width: 100%; 
+      padding: 12px 16px; 
+      border: 1px solid var(--border); 
+      border-radius: 10px; 
+      background: #fff; 
+      font-size: 15px; 
+      transition: all 0.2s ease;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .row { 
+      display: flex; 
+      gap: 12px; 
+      align-items: center; 
+      flex-wrap: wrap;
+    }
+    
+    .btn { 
+      display: inline-flex; 
+      align-items: center; 
+      justify-content: center;
+      gap: 8px; 
+      padding: 12px 20px; 
+      border-radius: 10px; 
+      border: 1px solid var(--border); 
+      cursor: pointer; 
+      background: #fff; 
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px var(--shadow);
+    }
+    
+    .btn.primary { 
+      background: var(--primary); 
+      border-color: var(--primary); 
+      color: #fff; 
+    }
+    
+    .btn.primary:hover {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+    
+    .btn.success { 
+      background: var(--success); 
+      border-color: var(--success); 
+      color: #fff; 
+    }
+    
+    .btn.danger { 
+      background: var(--danger); 
+      border-color: var(--danger); 
+      color: #fff; 
+    }
+    
+    .btn.warning { 
+      background: var(--warning); 
+      border-color: var(--warning); 
+      color: #fff; 
+    }
+    
+    .btn.ghost { 
+      background: transparent; 
+      border-color: transparent;
+    }
+    
+    .btn.ghost:hover {
+      background: var(--background);
+    }
+    
+    .actions { 
+      display: flex; 
+      justify-content: space-between; 
+      flex-wrap: wrap; 
+      gap: 12px; 
+      padding: 20px; 
+      border-top: 1px solid var(--border);
+      background: var(--background);
+    }
+
+    /* Table */
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin: 16px 0;
+    }
+    
+    th, td { 
+      border-bottom: 1px solid var(--border); 
+      padding: 12px 16px; 
+      text-align: left; 
+      font-size: 14px; 
+    }
+    
+    th { 
+      color: var(--muted); 
+      font-weight: 600; 
+      background: #f8fafc; 
+      white-space: nowrap;
+    }
+    
+    tfoot td { 
+      font-weight: 700; 
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin: 16px 0;
+    }
+
+    /* INVOICE PREVIEW */
+    .invoice { 
+      background: #fff; 
+      border: 1px solid var(--border); 
+      border-radius: 16px; 
+      padding: 32px; 
+      margin-top: 32px;
+    }
+    
+    .invoice header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: flex-start; 
+      gap: 24px; 
+      border-bottom: 2px solid var(--border); 
+      padding-bottom: 24px; 
+      margin-bottom: 24px; 
+    }
+    
+    .brand { 
+      display: flex; 
+      align-items: center; 
+      gap: 16px; 
+      flex: 1;
+    }
+    
+    .brand img { 
+      height: 64px; 
+      width: 64px; 
+      object-fit: cover; 
+      border-radius: 12px; 
+      border: 1px solid var(--border); 
+      flex-shrink: 0;
+    }
+    
+    .brand-text {
+      flex: 1;
+    }
+    
+    .brand h1 { 
+      font-size: 24px; 
+      margin: 0 0 4px 0; 
+      color: var(--primary);
+    }
+    
+    .muted { 
+      color: var(--muted); 
+      font-size: 14px;
+    }
+    
+    .right { 
+      text-align: right; 
+    }
+    
+    .totals { 
+      width: 100%; 
+      max-width: 360px; 
+      margin-left: auto; 
+    }
+    
+    .totals .row { 
+      justify-content: space-between; 
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .totals .row:last-child {
+      border-bottom: none;
+      font-weight: bold;
+      font-size: 1.2em;
+      padding-top: 12px;
+    }
+    
+    .stamp { 
+      font-weight: 700; 
+      color: var(--success); 
+      border: 2px dashed var(--success); 
+      padding: 8px 16px; 
+      border-radius: 8px; 
+      display: inline-block;
+      margin-top: 16px;
+    }
+    
+    .client-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .info-box {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--background);
+    }
+    
+    .info-box h3 {
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .section-title {
+      font-size: 18px;
+      margin: 24px 0 16px 0;
+      color: var(--ink);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--primary);
+      color: white;
+      margin-left: 8px;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 16px 24px;
+      border-radius: 10px;
+      background: var(--success);
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .print-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Footer avec les informations de l'entreprise */
+    .invoice-footer {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+    
+    .invoice-footer strong {
+      color: var(--ink);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    /* Print styles */
+    @media print {
+      body { 
+        background: #fff; 
+        font-size: 12px;
+      }
+      
+      #builder { 
+        display: none; 
+      }
+      
+      .container { 
+        max-width: none; 
+        padding: 0; 
+        margin: 0; 
+      }
+      
+      .invoice { 
+        border: none; 
+        border-radius: 0; 
+        box-shadow: none; 
+        padding: 0;
+      }
+      
+      .print-actions {
+        display: none;
+      }
+      
+      header {
+        display: none;
+      }
+      
+      .invoice-footer {
+        margin-top: 20px;
+        font-size: 10px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .grid.cols-3, 
+      .grid.cols-2 {
+        grid-template-columns: 1fr;
+      }
+      
+      .invoice header {
+        flex-direction: column;
+      }
+      
+      .right {
+        text-align: left;
+        width: 100%;
+      }
+      
+      .brand {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .actions {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>El Haji Auto Facture</h1>
+      <p>Créez et imprimez des factures professionnelles en quelques minutes</p>
+    </header>
+    
+    <!-- BUILDER / FORM -->
+    <section id="builder" class="card" aria-label="Formulaire facture">
+      <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        Informations de la facture
+      </h2>
+      
+      <div style="padding: 24px">
+        <div class="grid cols-3">
+          <div class="form-group">
+            <label for="invNumber">Numéro de facture</label>
+            <input id="invNumber" placeholder="ex. 0285" />
+          </div>
+          <div class="form-group">
+            <label for="invDate">Date</label>
+            <input id="invDate" type="date" />
+          </div>
+          <div class="form-group">
+            <label for="city">Ville</label>
+            <input id="city" placeholder="ex. Tanger" />
+          </div>
+          <div class="form-group">
+            <label for="client">Client</label>
+            <input id="client" placeholder="ex. AL AFAFE D'ASSURANCES" />
+          </div>
+          <div class="form-group">
+            <label for="vehicle">Véhicule</label>
+            <input id="vehicle" placeholder="ex. PEUGEOT PARTNER" />
+          </div>
+          <div class="form-group">
+            <label for="ice">ICE</label>
+            <input id="ice" placeholder="ex. 001552684000059" />
+          </div>
+          <div class="form-group">
+            <label for="matricule">Matricule</label>
+            <input id="matricule" placeholder="ex. 56397-B-40" />
+          </div>
+          <div class="form-group">
+            <label for="tva">TVA %</label>
+            <input id="tva" type="number" step="0.01" value="20" />
+          </div>
+          <div class="form-group">
+            <label for="currency">Devise</label>
+            <select id="currency">
+              <option value="MAD" selected>MAD (د.م)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="USD">USD ($)</option>
+            </select>
+          </div>
+        </div>
+
+        <h3 class="section-title">Articles de la facture</h3>
+        <div class="row" style="margin-bottom: 16px; justify-content: space-between;">
+          <div class="muted">Ajoutez les articles ou services à facturer</div>
+          <div>
+            <button class="btn success" id="addLine">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Ajouter un article
+            </button>
+            <button class="btn ghost" id="clearLines">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Tout effacer
+            </button>
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <table id="linesTable">
+            <thead>
+              <tr>
+                <th style="width:45%">Désignation</th>
+                <th style="width:15%">Quantité</th>
+                <th style="width:20%">Prix Unitaire</th>
+                <th style="width:15%">Total</th>
+                <th style="width:5%"></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="row" style="gap:8px;">
+          <button class="btn warning" id="prefill">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Exemple de facture
+          </button>
+          <button class="btn danger" id="resetAll">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            Réinitialiser
+          </button>
+        </div>
+        <div class="row" style="gap:8px;">
+          <button class="btn" id="updatePreview">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 0 1 9-9"></path>
+            </svg>
+            Actualiser l'aperçu
+          </button>
+          <button class="btn primary" id="printBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Imprimer / PDF
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVOICE PREVIEW -->
+    <section class="invoice" id="invoice" aria-label="Aperçu facture">
+      <header>
+        <div class="brand">
+          <div class="brand-text">
+            <center><h1>GARAGE AUTO EL HAJI</h1></center>
+            <div class="muted">AV AL QODS LIMCOPA LT 2, 1 ER ETAGE N° 05 AQUAMA - TANGER STATUTS</div>
+          </div>
+        </div>
+        <div class="right">
+          <div style="font-size:28px; font-weight:800; color: var(--primary);">FACTURE</div>
+          <div class="muted">N°: <span id="pInvNumber">—</span></div>
+          <div class="muted">Date: <span id="pInvDate">—</span></div>
+          <div class="muted">Lieu: <span id="pCity">—</span></div>
+        </div>
+      </header>
+
+      <div class="client-info">
+        <div class="info-box">
+          <h3>Client</h3>
+          <div style="font-weight:600; font-size: 18px;" id="pClient">—</div>
+        </div>
+        <div class="info-box">
+          <h3>Véhicule</h3>
+          <div style="font-weight:500;" id="pVehicle">—</div>
+        </div>
+        <div class="info-box">
+          <h3>Informations supplémentaires</h3>
+          <div>ICE: <span id="pICE">—</span></div>
+          <div>Matricule: <span id="pMatricule">—</span></div>
+        </div>
+      </div>
+
+      <h3 class="section-title">Détails de la facture</h3>
+      
+      <div class="table-container">
+        <table id="previewTable">
+          <thead>
+            <tr>
+              <th>Désignation</th>
+              <th>Quantité</th>
+              <th>Prix Unitaire</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="previewBody"></tbody>
+        </table>
+      </div>
+
+      <div class="totals">
+        <div class="row"><div>Total HT</div><div id="pHT">—</div></div>
+        <div class="row"><div>TVA (<span id="pTVAperc">—</span>%)</div><div id="pTVA">—</div></div>
+        <div class="row" style="font-size:20px; color: var(--primary);"><div>Total TTC</div><div id="pTTC">—</div></div>
+      </div>
+
+      <div class="row" style="margin-top: 32px; justify-content: space-between; align-items: flex-end;">
+        <div class="muted">Montant en <span id="pCurrency">MAD</span>. Merci pour votre confiance.</div>
+        <div class="stamp">Payable à réception</div>
+      </div>
+      
+      <!-- NOUVEAU PIED DE PAGE AVEC LES INFORMATIONS DE L'ENTREPRISE -->
+      <div class="invoice-footer">
+        <strong>GARAGE AUTO EL HAJI * S.A.R.L AU</strong>
+        La société dispose d'un capital social limité à 100 000,00 dirhams.<br>
+        Sécurité Sociale : AV AL QODS LIMCOPA LT 2, 1 ER ETAGE N° 05 AQUAMA - TANGER STATUTS<br>
+        www.elhajiauto.com<br>
+        ICE : 003720270000090<br>
+        +212 672 11 00 78
+      </div>
+      
+      <div class="print-actions">
+        <button class="btn" onclick="window.print()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          Imprimer la facture
+        </button>
+        <button class="btn primary" id="saveInvoice">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          Enregistrer la facture
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div class="notification" id="notification">Facture enregistrée avec succès!</div>
+
+  <script>
+    // Utility functions
+    const el = id => document.getElementById(id);
+    const fmt = (n, currency) => new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n) + ' ' + currency;
+    
+    // State management
+    let invoiceData = {
+      number: '',
+      date: '',
+      client: '',
+      items: [],
+      totals: {
+        ht: 0,
+        tva: 0,
+        ttc: 0
+      }
+    };
+    
+    // DOM elements
+    const tbody = document.querySelector('#linesTable tbody');
+    const notification = el('notification');
+    
+    // Show notification
+    function showNotification(message, type = 'success') {
+      notification.textContent = message;
+      notification.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Add a new line to the items table
+    function addLine(data = {}) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input class="desc" placeholder="Description de l'article ou service" value="${data.desc || ''}"></td>
+        <td><input class="qty" type="number" step="0.01" min="0" value="${data.qty ?? 1}"></td>
+        <td><input class="pu" type="number" step="0.01" min="0" value="${data.pu ?? 0}"></td>
+        <td class="lineTotal muted">0.00</td>
+        <td><button class="btn ghost del" title="Supprimer cette ligne">✖</button></td>
+      `;
+      tbody.appendChild(tr);
+      
+      // Add event listeners
+      tr.querySelectorAll('input').forEach(i => i.addEventListener('input', recalcLine));
+      tr.querySelector('.del').addEventListener('click', () => { 
+        tr.remove(); 
+        recalcAll(); 
+        showNotification('Ligne supprimée', 'danger');
+      });
+      
+      recalcLine({ currentTarget: tr.querySelector('.qty') });
+    }
+    
+    // Recalculate a single line total
+    function recalcLine(e) {
+      const tr = e.currentTarget.closest('tr');
+      const qty = parseFloat(tr.querySelector('.qty').value) || 0;
+      const pu = parseFloat(tr.querySelector('.pu').value) || 0;
+      const total = qty * pu;
+      tr.querySelector('.lineTotal').textContent = total.toFixed(2);
+      recalcAll();
+    }
+    
+    // Get currency symbol
+    function getCurrencySymbol(code) {
+      return code || 'MAD';
+    }
+    
+    // Recalculate all totals and update preview
+    function recalcAll() {
+      const currency = el('currency').value;
+      const lines = [...tbody.querySelectorAll('tr')].map(tr => ({
+        desc: tr.querySelector('.desc').value.trim(),
+        qty: parseFloat(tr.querySelector('.qty').value) || 0,
+        pu: parseFloat(tr.querySelector('.pu').value) || 0,
+      })).filter(l => l.desc || l.qty || l.pu);
+      
+      // Update invoice data
+      invoiceData.items = lines;
+      
+      const HT = lines.reduce((s, l) => s + l.qty * l.pu, 0);
+      const tvaPerc = parseFloat(el('tva').value) || 0;
+      const TVA = HT * (tvaPerc / 100);
+      const TTC = HT + TVA;
+      
+      // Update invoice totals
+      invoiceData.totals = { ht: HT, tva: TVA, ttc: TTC };
+      
+      // Update preview table
+      const pBody = el('previewBody');
+      pBody.innerHTML = '';
+      
+      lines.forEach(l => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${l.desc || ''}</td>
+          <td>${(l.qty || 0).toString()}</td>
+          <td>${fmt(l.pu || 0, getCurrencySymbol(currency))}</td>
+          <td>${fmt((l.qty||0)*(l.pu||0), getCurrencySymbol(currency))}</td>
+        `;
+        pBody.appendChild(tr);
+      });
+      
+      // Update totals display
+      el('pHT').textContent = fmt(HT, getCurrencySymbol(currency));
+      el('pTVAperc').textContent = (isFinite(tvaPerc) ? tvaPerc : 0).toString();
+      el('pTVA').textContent = fmt(TVA, getCurrencySymbol(currency));
+      el('pTTC').textContent = fmt(TTC, getCurrencySymbol(currency));
+      el('pCurrency').textContent = getCurrencySymbol(currency);
+    }
+    
+    // Sync header information and recalculate
+    function syncHeaderAndRecalc() {
+      el('pInvNumber').textContent = el('invNumber').value || '—';
+      el('pInvDate').textContent = el('invDate').value || new Date().toLocaleDateString();
+      el('pClient').textContent = el('client').value || '—';
+      el('pVehicle').textContent = el('vehicle').value || '—';
+      el('pICE').textContent = el('ice').value || '—';
+      el('pMatricule').textContent = el('matricule').value || '—';
+      el('pCity').textContent = el('city').value || '—';
+      
+      // Update invoice data
+      invoiceData.number = el('invNumber').value;
+      invoiceData.date = el('invDate').value;
+      invoiceData.client = el('client').value;
+      
+      recalcAll();
+    }
+    
+    // Save invoice data to localStorage
+    function saveInvoice() {
+      try {
+        const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+        invoiceData.id = Date.now().toString();
+        invoiceData.createdAt = new Date().toISOString();
+        invoices.push(invoiceData);
+        localStorage.setItem('invoices', JSON.stringify(invoices));
+        showNotification('Facture enregistrée avec succès!');
+      } catch (e) {
+        showNotification('Erreur lors de l\'enregistrement', 'danger');
+        console.error(e);
+      }
+    }
+    
+    // Bind events
+    function bindEvents() {
+      el('addLine').addEventListener('click', () => {
+        addLine();
+        showNotification('Nouvelle ligne ajoutée');
+      });
+      
+      el('clearLines').addEventListener('click', () => { 
+        if (confirm('Êtes-vous sûr de vouloir supprimer toutes les lignes?')) {
+          tbody.innerHTML=''; 
+          recalcAll(); 
+          showNotification('Toutes les lignes ont été supprimées', 'danger');
+        }
+      });
+      
+      el('updatePreview').addEventListener('click', () => {
+        syncHeaderAndRecalc();
+        showNotification('Aperçu actualisé');
+      });
+      
+      el('printBtn').addEventListener('click', () => {
+        syncHeaderAndRecalc();
+        window.print();
+      });
+      
+      el('saveInvoice').addEventListener('click', () => {
+        syncHeaderAndRecalc();
+        saveInvoice();
+      });
+      
+      el('resetAll').addEventListener('click', () => {
+        if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les données?')) {
+          document.querySelectorAll('#builder input').forEach(i => i.value = '');
+          tbody.innerHTML = '';
+          syncHeaderAndRecalc();
+          showNotification('Formulaire réinitialisé', 'danger');
+        }
+      });
+      
+      el('prefill').addEventListener('click', () => {
+        // Set default values
+        el('invNumber').value = 'FAC-' + new Date().getFullYear() + '-0285';
+        el('invDate').value = new Date().toISOString().split('T')[0];
+        el('city').value = 'Tanger';
+        el('client').value = 'AL AFAFE D\'ASSURANCES';
+        el('vehicle').value = 'PEUGEOT PARTNER';
+        el('ice').value = '001552684000059';
+        el('matricule').value = '56397-B-40';
+        
+        // Add sample items
+        tbody.innerHTML = '';
+        addLine({ desc: 'Réparation moteur', qty: 1, pu: 1250 });
+        addLine({ desc: 'Remplacement pièces', qty: 3, pu: 350 });
+        addLine({ desc: 'Main d\'œuvre', qty: 2, pu: 250 });
+        
+        syncHeaderAndRecalc();
+        showNotification('Exemple de facture chargé');
+      });
+      
+      // Add input event listeners to header fields
+      document.querySelectorAll('#builder input, #builder select').forEach(i => {
+        i.addEventListener('input', syncHeaderAndRecalc);
+      });
+    }
+    
+    // Initialize
+    function init() {
+      bindEvents();
+      addLine();
+      el('invDate').value = new Date().toISOString().split('T')[0];
+      syncHeaderAndRecalc();
+    }
+    
+    // Run when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
