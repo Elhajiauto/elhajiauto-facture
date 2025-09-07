@@ -511,7 +511,7 @@
           </div>
           <div class="form-group">
             <label for="ice">ICE</label>
-            <input id="ice" placeholder="ex. 003720270000090" />
+            <input id="ice" value="003720270000090" readonly style="background-color: #f1f5f9; color: #64748b;" />
           </div>
           <div class="form-group">
             <label for="matricule">Matricule</label>
@@ -570,13 +570,6 @@
 
       <div class="actions">
         <div class="row" style="gap:8px;">
-          <button class="btn warning" id="prefill">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-            </svg>
-            Exemple de facture
-          </button>
           <button class="btn danger" id="resetAll">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
@@ -632,7 +625,7 @@
         </div>
         <div class="info-box">
           <h3>Informations supplémentaires</h3>
-          <div>ICE: <span id="pICE">—</span></div>
+          <div>ICE: <span id="pICE">003720270000090</span></div>
           <div>Matricule: <span id="pMatricule">—</span></div>
         </div>
       </div>
@@ -817,7 +810,8 @@
       el('pInvDate').textContent = el('invDate').value || new Date().toLocaleDateString();
       el('pClient').textContent = el('client').value || '—';
       el('pVehicle').textContent = el('vehicle').value || '—';
-      el('pICE').textContent = el('ice').value || '—';
+      // ICE est maintenant fixe
+      el('pICE').textContent = '003720270000090';
       el('pMatricule').textContent = el('matricule').value || '—';
       el('pCity').textContent = el('city').value || '—';
       
@@ -876,31 +870,15 @@
       
       el('resetAll').addEventListener('click', () => {
         if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les données?')) {
-          document.querySelectorAll('#builder input').forEach(i => i.value = '');
+          document.querySelectorAll('#builder input').forEach(i => {
+            if (i.id !== 'ice') { // Ne pas réinitialiser l'ICE
+              i.value = '';
+            }
+          });
           tbody.innerHTML = '';
           syncHeaderAndRecalc();
           showNotification('Formulaire réinitialisé', 'danger');
         }
-      });
-      
-      el('prefill').addEventListener('click', () => {
-        // Set default values
-        el('invNumber').value = 'FAC-' + new Date().getFullYear() + '-0285';
-        el('invDate').value = new Date().toISOString().split('T')[0];
-        el('city').value = 'Tanger';
-        el('client').value = 'AL AFAFE D\'ASSURANCES';
-        el('vehicle').value = 'PEUGEOT PARTNER';
-        el('ice').value = '003720270000090';
-        el('matricule').value = '56397-B-40';
-        
-        // Add sample items
-        tbody.innerHTML = '';
-        addLine({ desc: 'Réparation moteur', qty: 1, pu: 1250 });
-        addLine({ desc: 'Remplacement pièces', qty: 3, pu: 350 });
-        addLine({ desc: 'Main d\'œuvre', qty: 2, pu: 250 });
-        
-        syncHeaderAndRecalc();
-        showNotification('Exemple de facture chargé');
       });
       
       // Add input event listeners to header fields
