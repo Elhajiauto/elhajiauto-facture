@@ -388,7 +388,8 @@
     @media print {
       body { 
         background: #fff; 
-        font-size: 12px;
+        font-size: 11px; /* تقليل حجم الخط الأساسي */
+        line-height: 1.3; /* تقليل ارتفاع السطر */
       }
       
       #builder { 
@@ -405,7 +406,8 @@
         border: none; 
         border-radius: 0; 
         box-shadow: none; 
-        padding: 0;
+        padding: 10px; /* تقليل الهوامش الداخلية */
+        margin: 0;
       }
       
       .print-actions {
@@ -416,9 +418,92 @@
         display: none;
       }
       
+      .invoice header {
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      
+      .brand h1 {
+        font-size: 18px;
+      }
+      
+      .muted {
+        font-size: 11px;
+      }
+      
+      .right {
+        font-size: 11px;
+      }
+      
+      .right div:first-child {
+        font-size: 20px;
+      }
+      
+      .client-info {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      
+      .info-box {
+        padding: 10px;
+      }
+      
+      .info-box h3 {
+        font-size: 11px;
+        margin-bottom: 6px;
+      }
+      
+      .section-title {
+        font-size: 14px;
+        margin: 12px 0 8px 0;
+      }
+      
+      table {
+        font-size: 11px;
+        margin: 8px 0;
+      }
+      
+      th, td {
+        padding: 6px 8px;
+      }
+      
+      .totals {
+        max-width: 300px;
+        font-size: 11px;
+      }
+      
+      .totals .row:last-child {
+        font-size: 1.1em;
+      }
+      
+      .stamp {
+        font-size: 11px;
+        padding: 4px 8px;
+        margin-top: 8px;
+      }
+      
       .invoice-footer {
         margin-top: 20px;
+        padding-top: 12px;
         font-size: 10px;
+      }
+      
+      /* تجنب تقسيم الصفوف بين الصفحات */
+      tr {
+        page-break-inside: avoid;
+      }
+      
+      /* تجنب تقسيم المعلومات الأساسية بين الصفحات */
+      .invoice > *:not(table) {
+        page-break-inside: avoid;
+      }
+      
+      /* تقليل المسافات بين العناصر */
+      .invoice > * {
+        margin-bottom: 8px;
       }
     }
     
@@ -835,30 +920,36 @@
       el('resetAll').addEventListener('click', () => {
         if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les données?')) {
           document.querySelectorAll('#builder input').forEach(i => {
-            if (i.id !== 'ice') { // Ne pas réinitialiser l'ICE
-              i.value = '';
-            }
+            if (i.id !== 'ice') i.value = '';
           });
+          el('tva').value = '20';
           tbody.innerHTML = '';
           syncHeaderAndRecalc();
         }
       });
       
-      // Add input event listeners to header fields
-      document.querySelectorAll('#builder input, #builder select').forEach(i => {
-        i.addEventListener('input', syncHeaderAndRecalc);
+      // Auto-update on input change
+      document.querySelectorAll('#builder input, #builder select').forEach(el => {
+        el.addEventListener('input', syncHeaderAndRecalc);
       });
     }
     
     // Initialize
     function init() {
-      bindEvents();
+      // Set default date
+      el('invDate').valueAsDate = new Date();
+      
+      // Add one empty line
       addLine();
-      el('invDate').value = new Date().toISOString().split('T')[0];
+      
+      // Bind events
+      bindEvents();
+      
+      // Initial sync
       syncHeaderAndRecalc();
     }
     
-    // Run when DOM is loaded
+    // Run on load
     document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
