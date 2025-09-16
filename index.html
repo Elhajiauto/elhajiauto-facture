@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>El Haji Auto Facture</title>
+  <!-- Firebase App (le cœur de Firebase SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <!-- Firebase Firestore -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
     :root {
       --primary: #2563eb;
@@ -385,6 +389,100 @@
       font-size: 14px;
     }
 
+    /* Modal pour afficher toutes les factures */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background-color: white;
+      padding: 24px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 1000px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .modal-header h2 {
+      margin: 0;
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    
+    .search-bar {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+    }
+    
+    .search-bar input {
+      flex: 1;
+    }
+    
+    .invoices-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    
+    .invoice-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      background: white;
+      transition: all 0.2s ease;
+    }
+    
+    .invoice-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    
+    .invoice-card h3 {
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+    
+    .invoice-card p {
+      margin: 4px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    
+    .invoice-card .actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      padding: 0;
+      border-top: none;
+      background: transparent;
+    }
+
     /* Print styles */
     @media print {
       body { 
@@ -393,7 +491,8 @@
         line-height: 1.3; /* تقليل ارتفاع السطر */
       }
       
-      #builder { 
+      #builder, 
+      .modal { 
         display: none; 
       }
       
@@ -559,6 +658,10 @@
         width: 100%;
         justify-content: center;
       }
+      
+      .invoices-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -582,7 +685,7 @@
         <div class="grid cols-3">
           <div class="form-group">
             <label for="invNumber">Numéro de facture</label>
-            <input id="invNumber" placeholder="ex. 0285" />
+            <input id="invNumber" placeholder="ex. 0285" readonly style="background-color: #f1f5f9; color: #64748b;" />
           </div>
           <div class="form-group">
             <label for="invDate">Date</label>
@@ -594,11 +697,11 @@
           </div>
           <div class="form-group">
             <label for="client">Client</label>
-            <input id="client" placeholder="ex. AL AFAFE D'ASSURANCES" />
+            <input id="client" placeholder="ex. El HAJI MORAD" />
           </div>
           <div class="form-group">
             <label for="vehicle">Véhicule</label>
-            <input id="vehicle" placeholder="ex. PEUGEOT PARTNER" />
+            <input id="vehicle" placeholder="ex. VOLKSWAGEN TIGUAN" />
           </div>
           <div class="form-group">
             <label for="ice">ICE</label>
@@ -661,6 +764,16 @@
 
       <div class="actions">
         <div class="row" style="gap:8px;">
+          <button class="btn" id="viewAllInvoices">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Toutes les factures
+          </button>
           <button class="btn danger" id="resetAll">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
@@ -679,7 +792,7 @@
           <button class="btn primary" id="printBtn">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 6 2 18 2 18 9"></polyline>
-              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <path d="M6 18H4a2 2 0 0 1-2-2v5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
               <rect x="6" y="14" width="12" height="8"></rect>
             </svg>
             Imprimer / PDF
@@ -762,7 +875,7 @@
         <button class="btn" onclick="window.print()">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 6 2 18 2 18 9"></line>
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <path d="M6 18H4a2 2 0 0 1-2-2v5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
             <rect x="6" y="14" width="12" height="8"></rect>
           </svg>
           Imprimer la facture
@@ -779,11 +892,64 @@
     </section>
   </div>
 
+  <!-- Modal pour afficher toutes les factures -->
+  <div id="allInvoicesModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Toutes les factures</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <div class="search-bar">
+        <input type="text" id="invoiceSearch" placeholder="Rechercher par client, numéro de facture, véhicule..." />
+        <button class="btn primary" id="searchInvoices">Rechercher</button>
+      </div>
+      
+      <div id="invoicesList" class="invoices-grid">
+        <!-- Les factures seront chargées ici dynamiquement -->
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Configuration Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyC0YUGE6hRG9sck7rXcqjaB3he1nRGgbbU",
+    authDomain: "elhaji-auto.firebaseapp.com",
+    projectId: "elhaji-auto",
+    storageBucket: "elhaji-auto.appspot.com",
+    messagingSenderId: "596529784342",
+    appId: "1:596529784342:web:dfa01b1e33287ce36db737"
+  };
+
+    // Initialiser Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     // Utility functions
     const el = id => document.getElementById(id);
-    const fmt = (n, currency) => new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n) + ' ' + currency;
     
+    // Fonction de formatage des nombres corrigée
+    const fmt = (n, currency) => {
+      // Formater le nombre avec 2 décimales et séparateur de milliers
+      const formattedNumber = new Intl.NumberFormat('fr-FR', { 
+        minimumFractionDigits: 2, 
+        maximumFractionDigits: 2 
+      }).format(n);
+      
+      return formattedNumber + (currency ? ' ' + currency : '');
+    };
+    
+    // Fonction pour parser les nombres formatés en français
+    function parseFrenchNumber(str) {
+      // Supprimer tous les caractères non numériques sauf les virgules et points
+      // et convertir la virgule en point pour le parsing
+      return parseFloat(
+        str.replace(/[^\d,.-]/g, '') // Garder seulement chiffres, virgules, points et signe négatif
+             .replace(/,/g, '.')       // Remplacer virgule par point
+      ) || 0;
+    }
+
     // State management
     let invoiceData = {
       number: '',
@@ -800,181 +966,383 @@
     // DOM elements
     const tbody = document.querySelector('#linesTable tbody');
     
-    // Add a new line to the items table
-    function addLine(data = {}) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><input class="desc" placeholder="Description de l'article ou service" value="${data.desc || ''}"></td>
-        <td><input class="qty" type="number" step="0.01" min="0" value="${data.qty ?? 1}"></td>
-        <td><input class="pu" type="number" step="0.01" min="0" value="${data.pu ?? 0}"></td>
-        <td class="lineTotal muted">0.00</td>
-        <td><button class="btn ghost del" title="Supprimer cette ligne">✖</button></td>
-      `;
-      tbody.appendChild(tr);
-      
-      // Add event listeners
-      tr.querySelectorAll('input').forEach(i => i.addEventListener('input', recalcLine));
-      tr.querySelector('.del').addEventListener('click', () => { 
-        tr.remove(); 
-        recalcAll(); 
-      });
-      
-      recalcLine({ currentTarget: tr.querySelector('.qty') });
-    }
-    
-    // Recalculate a single line total
-    function recalcLine(e) {
-      const tr = e.currentTarget.closest('tr');
-      const qty = parseFloat(tr.querySelector('.qty').value) || 0;
-      const pu = parseFloat(tr.querySelector('.pu').value) || 0;
-      const total = qty * pu;
-      tr.querySelector('.lineTotal').textContent = total.toFixed(2);
-      recalcAll();
-    }
-    
-    // Get currency symbol
-    function getCurrencySymbol(code) {
-      return code || 'MAD';
-    }
-    
-    // Recalculate all totals and update preview
-    function recalcAll() {
-      const currency = el('currency').value;
-      const lines = [...tbody.querySelectorAll('tr')].map(tr => ({
-        desc: tr.querySelector('.desc').value.trim(),
-        qty: parseFloat(tr.querySelector('.qty').value) || 0,
-        pu: parseFloat(tr.querySelector('.pu').value) || 0,
-      })).filter(l => l.desc || l.qty || l.pu);
-      
-      // Update invoice data
-      invoiceData.items = lines;
-      
-      const HT = lines.reduce((s, l) => s + l.qty * l.pu, 0);
-      const tvaPerc = parseFloat(el('tva').value) || 0;
-      const TVA = HT * (tvaPerc / 100);
-      const TTC = HT + TVA;
-      
-      // Update invoice totals
-      invoiceData.totals = { ht: HT, tva: TVA, ttc: TTC };
-      
-      // Update preview table
-      const pBody = el('previewBody');
-      pBody.innerHTML = '';
-      
-      lines.forEach(l => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${l.desc || ''}</td>
-          <td>${(l.qty || 0).toString()}</td>
-          <td>${fmt(l.pu || 0, getCurrencySymbol(currency))}</td>
-          <td>${fmt((l.qty||0)*(l.pu||0), getCurrencySymbol(currency))}</td>
-        `;
-        pBody.appendChild(tr);
-      });
-      
-      // Update totals display
-      el('pHT').textContent = fmt(HT, getCurrencySymbol(currency));
-      el('pTVAperc').textContent = (isFinite(tvaPerc) ? tvaPerc : 0).toString();
-      el('pTVA').textContent = fmt(TVA, getCurrencySymbol(currency));
-      el('pTTC').textContent = fmt(TTC, getCurrencySymbol(currency));
-      el('pCurrency').textContent = getCurrencySymbol(currency);
-    }
-    
-    // Sync header information and recalculate
-    function syncHeaderAndRecalc() {
-      el('pInvNumber').textContent = el('invNumber').value || '—';
-      el('pInvDate').textContent = el('invDate').value || new Date().toLocaleDateString();
-      el('pClient').textContent = el('client').value || '—';
-      el('pVehicle').textContent = el('vehicle').value || '—';
-      // ICE est maintenant fixe
-      el('pICE').textContent = '003720270000090';
-      el('pMatricule').textContent = el('matricule').value || '—';
-      el('pCity').textContent = el('city').value || '—';
-      
-      // Update invoice data
-      invoiceData.number = el('invNumber').value;
-      invoiceData.date = el('invDate').value;
-      invoiceData.client = el('client').value;
-      
-      recalcAll();
-    }
-    
-    // Save invoice data to localStorage
-    function saveInvoice() {
+    // Générer un numéro de facture unique et séquentiel
+    async function generateInvoiceNumber() {
       try {
-        const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
-        invoiceData.id = Date.now().toString();
-        invoiceData.createdAt = new Date().toISOString();
-        invoices.push(invoiceData);
-        localStorage.setItem('invoices', JSON.stringify(invoices));
-        alert('Facture enregistrée avec succès!');
-      } catch (e) {
-        alert('Erreur lors de l\'enregistrement');
-        console.error(e);
+        // Récupérer le dernier numéro de facture utilisé
+        const invoicesRef = db.collection('invoices');
+        const snapshot = await invoicesRef
+          .orderBy('number', 'desc')
+          .limit(1)
+          .get();
+        
+        let lastNumber = 0;
+        if (!snapshot.empty) {
+          const lastInvoice = snapshot.docs[0].data();
+          lastNumber = parseInt(lastInvoice.number) || 0;
+        }
+        
+        // Générer le nouveau numéro (incrément de 1)
+        const newNumber = (lastNumber + 1).toString().padStart(4, '0');
+        el('invNumber').value = newNumber;
+        invoiceData.number = newNumber;
+      } catch (error) {
+        console.error("Erreur lors de la génération du numéro de facture:", error);
+        // Fallback: utiliser l'horodatage comme numéro unique
+        const timestamp = Date.now().toString().slice(-4);
+        el('invNumber').value = timestamp;
+        invoiceData.number = timestamp;
       }
     }
     
-    // Bind events
-    function bindEvents() {
-      el('addLine').addEventListener('click', () => {
-        addLine();
+    // Initialiser la date du jour
+    function initDate() {
+      const today = new Date().toISOString().split('T')[0];
+      el('invDate').value = today;
+      invoiceData.date = today;
+    }
+    
+    // Ajouter une ligne d'article
+    function addLineItem(desc = '', qty = 1, price = 0) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="text" class="line-desc" value="${desc}" placeholder="Description de l'article" /></td>
+        <td><input type="number" class="line-qty" value="${qty}" min="1" step="1" /></td>
+        <td><input type="number" class="line-price" value="${price}" min="0" step="0.01" /></td>
+        <td class="line-total">${fmt(0, '')}</td>
+        <td><button class="btn danger remove-line" style="padding:4px 8px;">✕</button></td>
+      `;
+      tbody.appendChild(tr);
+      
+      // Ajouter les écouteurs d'événements
+      tr.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', updateLineTotal);
       });
       
-      el('clearLines').addEventListener('click', () => { 
-        if (confirm('Êtes-vous sûr de vouloir supprimer toutes les lignes?')) {
-          tbody.innerHTML=''; 
-          recalcAll(); 
-        }
+      tr.querySelector('.remove-line').addEventListener('click', () => {
+        tr.remove();
+        updateTotals();
       });
       
-      el('updatePreview').addEventListener('click', () => {
-        syncHeaderAndRecalc();
+      updateLineTotal.call(tr);
+    }
+    
+    // Mettre à jour le total d'une ligne
+    function updateLineTotal() {
+      const tr = this.closest('tr');
+      const qty = parseFloat(tr.querySelector('.line-qty').value) || 0;
+      const price = parseFloat(tr.querySelector('.line-price').value) || 0;
+      const total = qty * price;
+      
+      // Formater le total avec séparateur de milliers
+      tr.querySelector('.line-total').textContent = fmt(total, '');
+      
+      updateTotals();
+    }
+    
+    // Mettre à jour les totaux
+    function updateTotals() {
+      const lines = Array.from(tbody.querySelectorAll('tr'));
+      let ht = 0;
+      
+      lines.forEach(tr => {
+        // Récupérer le texte du total et convertir en nombre
+        const totalText = tr.querySelector('.line-total').textContent;
+        const total = parseFrenchNumber(totalText) || 0;
+        ht += total;
       });
       
-      el('printBtn').addEventListener('click', () => {
-        syncHeaderAndRecalc();
-        window.print();
+      const tvaPerc = parseFloat(el('tva').value) || 0;
+      const tva = ht * (tvaPerc / 100);
+      const ttc = ht + tva;
+      
+      invoiceData.totals = { ht, tva, ttc };
+      
+      // Mettre à jour l'aperçu
+      updatePreview();
+    }
+    
+    // Mettre à jour l'aperçu
+    function updatePreview() {
+      // Mettre à jour les informations de base
+      el('pInvNumber').textContent = el('invNumber').value;
+      el('pInvDate').textContent = formatDate(el('invDate').value);
+      el('pCity').textContent = el('city').value;
+      el('pClient').textContent = el('client').value;
+      el('pVehicle').textContent = el('vehicle').value;
+      el('pMatricule').textContent = el('matricule').value;
+      el('pTVAperc').textContent = parseFloat(el('tva').value) || 0;
+      el('pCurrency').textContent = el('currency').value;
+      
+      // Mettre à jour les lignes d'articles
+      const previewBody = el('previewBody');
+      previewBody.innerHTML = '';
+      
+      const lines = Array.from(tbody.querySelectorAll('tr'));
+      lines.forEach(tr => {
+        const desc = tr.querySelector('.line-desc').value;
+        const qty = tr.querySelector('.line-qty').value;
+        const price = parseFrenchNumber(tr.querySelector('.line-price').value) || 0;
+        const total = parseFrenchNumber(tr.querySelector('.line-total').textContent) || 0;
+        
+        const trPreview = document.createElement('tr');
+        trPreview.innerHTML = `
+          <td>${desc || '—'}</td>
+          <td>${qty}</td>
+          <td>${fmt(price, '')}</td>
+          <td>${fmt(total, '')}</td>
+        `;
+        previewBody.appendChild(trPreview);
       });
       
-      el('saveInvoice').addEventListener('click', () => {
-        syncHeaderAndRecalc();
-        saveInvoice();
+      // Mettre à jour les totaux
+      const currency = el('currency').value;
+      el('pHT').textContent = fmt(invoiceData.totals.ht, currency);
+      el('pTVA').textContent = fmt(invoiceData.totals.tva, currency);
+      el('pTTC').textContent = fmt(invoiceData.totals.ttc, currency);
+    }
+    
+    // Formater la date
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       });
-      
-      el('resetAll').addEventListener('click', () => {
-        if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les données?')) {
-          document.querySelectorAll('#builder input').forEach(i => {
-            if (i.id !== 'ice') i.value = '';
+    }
+    
+    // Sauvegarder la facture dans Firebase
+    async function saveInvoice() {
+      try {
+        // Récupérer les données de la facture
+        const invoice = {
+          number: el('invNumber').value,
+          date: el('invDate').value,
+          client: el('client').value,
+          vehicle: el('vehicle').value,
+          matricule: el('matricule').value,
+          city: el('city').value,
+          tva: parseFloat(el('tva').value) || 0,
+          currency: el('currency').value,
+          items: [],
+          totals: invoiceData.totals,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        // Récupérer les articles
+        const lines = Array.from(tbody.querySelectorAll('tr'));
+        lines.forEach(tr => {
+          invoice.items.push({
+            description: tr.querySelector('.line-desc').value,
+            quantity: parseFloat(tr.querySelector('.line-qty').value) || 0,
+            price: parseFloat(tr.querySelector('.line-price').value) || 0,
+            total: parseFrenchNumber(tr.querySelector('.line-total').textContent) || 0
           });
-          el('tva').value = '20';
+        });
+        
+        // Sauvegarder dans Firestore
+        await db.collection('invoices').doc(invoice.number).set(invoice);
+        
+        alert('Facture enregistrée avec succès!');
+        
+      } catch (error) {
+        console.error("Erreur lors de l'enregistrement de la facture:", error);
+        alert("Erreur lors de l'enregistrement de la facture. Veuillez réessayer.");
+      }
+    }
+    
+    // Charger toutes les factures
+    async function loadAllInvoices(searchTerm = '') {
+      try {
+        const invoicesRef = db.collection('invoices');
+        let query = invoicesRef.orderBy('createdAt', 'desc');
+        
+        // Si un terme de recherche est fourni, filtrer les résultats
+        if (searchTerm) {
+          // Note: Firestore ne prend pas en charge la recherche par plusieurs champs sans index
+          // Cette implémentation est basique et peut nécessiter des ajustements
+          query = invoicesRef
+            .orderBy('number')
+            .startAt(searchTerm)
+            .endAt(searchTerm + '\uf8ff');
+        }
+        
+        const snapshot = await query.get();
+        const invoicesList = el('invoicesList');
+        invoicesList.innerHTML = '';
+        
+        if (snapshot.empty) {
+          invoicesList.innerHTML = '<p style="text-align:center;padding:20px;color:var(--muted)">Aucune facture trouvée.</p>';
+          return;
+        }
+        
+        snapshot.forEach(doc => {
+          const invoice = doc.data();
+          const invoiceCard = document.createElement('div');
+          invoiceCard.className = 'invoice-card';
+          
+          invoiceCard.innerHTML = `
+            <h3>Facture #${invoice.number}</h3>
+            <p><strong>Client:</strong> ${invoice.client || '—'}</p>
+            <p><strong>Véhicule:</strong> ${invoice.vehicle || '—'}</p>
+            <p><strong>Date:</strong> ${formatDate(invoice.date)}</p>
+            <p><strong>Total:</strong> ${fmt(invoice.totals.ttc, invoice.currency)}</p>
+            <div class="actions">
+              <button class="btn primary view-invoice" data-id="${invoice.number}">Voir</button>
+              <button class="btn danger delete-invoice" data-id="${invoice.number}">Supprimer</button>
+            </div>
+          `;
+          
+          invoicesList.appendChild(invoiceCard);
+        });
+        
+        // Ajouter les écouteurs d'événements pour les boutons
+        document.querySelectorAll('.view-invoice').forEach(btn => {
+          btn.addEventListener('click', () => viewInvoice(btn.dataset.id));
+        });
+        
+        document.querySelectorAll('.delete-invoice').forEach(btn => {
+          btn.addEventListener('click', () => deleteInvoice(btn.dataset.id));
+        });
+        
+      } catch (error) {
+        console.error("Erreur lors du chargement des factures:", error);
+        el('invoicesList').innerHTML = '<p style="text-align:center;padding:20px;color:var(--danger)">Erreur lors du chargement des factures.</p>';
+      }
+    }
+    
+    // Voir une facture spécifique
+    async function viewInvoice(invoiceNumber) {
+      try {
+        const doc = await db.collection('invoices').doc(invoiceNumber).get();
+        
+        if (!doc.exists) {
+          alert("Facture non trouvée.");
+          return;
+        }
+        
+        const invoice = doc.data();
+        
+        // Remplir le formulaire avec les données de la facture
+        el('invNumber').value = invoice.number;
+        el('invDate').value = invoice.date;
+        el('client').value = invoice.client || '';
+        el('vehicle').value = invoice.vehicle || '';
+        el('matricule').value = invoice.matricule || '';
+        el('city').value = invoice.city || '';
+        el('tva').value = invoice.tva || 20;
+        el('currency').value = invoice.currency || 'MAD';
+        
+        // Vider et remplir les lignes d'articles
+        tbody.innerHTML = '';
+        if (invoice.items && invoice.items.length > 0) {
+          invoice.items.forEach(item => {
+            addLineItem(item.description, item.quantity, item.price);
+          });
+        } else {
+          addLineItem();
+        }
+        
+        updateTotals();
+        
+        // Fermer le modal
+        el('allInvoicesModal').style.display = 'none';
+        
+      } catch (error) {
+        console.error("Erreur lors du chargement de la facture:", error);
+        alert("Erreur lors du chargement de la facture.");
+      }
+    }
+    
+    // Supprimer une facture
+    async function deleteInvoice(invoiceNumber) {
+      if (!confirm(`Êtes-vous sûr de vouloir supprimer la facture #${invoiceNumber}?`)) {
+        return;
+      }
+      
+      try {
+        await db.collection('invoices').doc(invoiceNumber).delete();
+        alert("Facture supprimée avec succès.");
+        loadAllInvoices();
+      } catch (error) {
+        console.error("Erreur lors de la suppression de la facture:", error);
+        alert("Erreur lors de la suppression de la facture.");
+      }
+    }
+    
+    // Initialiser l'application
+    function initApp() {
+      // Initialiser la date
+      initDate();
+      
+      // Générer un numéro de facture
+      generateInvoiceNumber();
+      
+      // Ajouter une ligne d'article par défaut
+      addLineItem();
+      
+      // Mettre à jour l'aperçu initial
+      updatePreview();
+      
+      // Écouteurs d'événements
+      el('addLine').addEventListener('click', () => addLineItem());
+      el('clearLines').addEventListener('click', () => {
+        tbody.innerHTML = '';
+        addLineItem();
+        updateTotals();
+      });
+      
+      el('updatePreview').addEventListener('click', updatePreview);
+      el('printBtn').addEventListener('click', () => window.print());
+      el('saveInvoice').addEventListener('click', saveInvoice);
+      el('resetAll').addEventListener('click', () => {
+        if (confirm('Voulez-vous vraiment réinitialiser le formulaire? Toutes les données seront perdues.')) {
+          el('client').value = '';
+          el('vehicle').value = '';
+          el('matricule').value = '';
+          el('city').value = '';
+          el('tva').value = 20;
+          el('currency').value = 'MAD';
           tbody.innerHTML = '';
-          syncHeaderAndRecalc();
+          addLineItem();
+          generateInvoiceNumber();
+          updateTotals();
         }
       });
       
-      // Auto-update on input change
-      document.querySelectorAll('#builder input, #builder select').forEach(el => {
-        el.addEventListener('input', syncHeaderAndRecalc);
+      // Écouteurs pour les champs de formulaire
+      const formFields = ['invDate', 'client', 'vehicle', 'matricule', 'city', 'tva', 'currency'];
+      formFields.forEach(field => {
+        el(field).addEventListener('input', updatePreview);
+      });
+      
+      // Modal pour toutes les factures
+      el('viewAllInvoices').addEventListener('click', () => {
+        el('allInvoicesModal').style.display = 'flex';
+        loadAllInvoices();
+      });
+      
+      document.querySelector('.close-modal').addEventListener('click', () => {
+        el('allInvoicesModal').style.display = 'none';
+      });
+      
+      el('searchInvoices').addEventListener('click', () => {
+        const searchTerm = el('invoiceSearch').value;
+        loadAllInvoices(searchTerm);
+      });
+      
+      // Fermer le modal en cliquant à l'extérieur
+      window.addEventListener('click', (event) => {
+        if (event.target === el('allInvoicesModal')) {
+          el('allInvoicesModal').style.display = 'none';
+        }
       });
     }
     
-    // Initialize
-    function init() {
-      // Set default date
-      el('invDate').valueAsDate = new Date();
-      
-      // Add one empty line
-      addLine();
-      
-      // Bind events
-      bindEvents();
-      
-      // Initial sync
-      syncHeaderAndRecalc();
-    }
-    
-    // Run on load
-    document.addEventListener('DOMContentLoaded', init);
+    // Démarrer l'application lorsque le DOM est chargé
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
