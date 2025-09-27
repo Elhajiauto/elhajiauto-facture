@@ -483,6 +483,19 @@
       background: transparent;
     }
 
+    /* Checkbox style */
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .checkbox-container input[type="checkbox"] {
+      width: auto;
+      transform: scale(1.2);
+    }
+
     /* Print styles */
     @media print {
       body { 
@@ -664,17 +677,6 @@
       }
     }
   </style>
-  <!-- Google tag (GA4) for Elhajiauto.com -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8L2J6R1HNE"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  // Replace with your Measurement ID
-  gtag('config', 'G-8L2J6R1HNE');
-</script>
-
 </head>
 <body>
   <div class="container">
@@ -734,6 +736,18 @@
               <option value="USD">USD ($)</option>
             </select>
           </div>
+        </div>
+
+        <!-- Case à cocher pour l'ICE client -->
+        <div class="checkbox-container">
+          <input type="checkbox" id="hasClientICE" />
+          <label for="hasClientICE" style="margin-bottom: 0;">Client a un ICE</label>
+        </div>
+
+        <!-- Champ ICE client (caché par défaut) -->
+        <div class="form-group" id="clientICEContainer" style="display: none;">
+          <label for="clientICE">ICE Client</label>
+          <input id="clientICE" placeholder="ex. 003720270000090" />
         </div>
 
         <h3 class="section-title">Articles de la facture</h3>
@@ -833,6 +847,7 @@
         <div class="info-box">
           <h3>Client</h3>
           <div style="font-weight:600; font-size: 18px;" id="pClient">—</div>
+          <div id="pClientICEContainer" style="display: none;">ICE Client: <span id="pClientICE">—</span></div>
         </div>
         <div class="info-box">
           <h3>Véhicule</h3>
@@ -840,7 +855,7 @@
         </div>
         <div class="info-box">
           <h3>Informations supplémentaires</h3>
-          <div>ICE: <span id="pICE">003720270000090</span></div>
+          <div>Notre ICE: <span id="pICE">003720270000090</span></div>
           <div>Matricule: <span id="pMatricule">—</span></div>
         </div>
       </div>
@@ -1085,6 +1100,18 @@
       el('pTVAperc').textContent = parseFloat(el('tva').value) || 0;
       el('pCurrency').textContent = el('currency').value;
       
+      // Gestion de l'ICE client
+      const hasClientICE = el('hasClientICE').checked;
+      const clientICEValue = el('clientICE').value;
+      const clientICEContainer = el('pClientICEContainer');
+      
+      if (hasClientICE && clientICEValue) {
+        clientICEContainer.style.display = 'block';
+        el('pClientICE').textContent = clientICEValue;
+      } else {
+        clientICEContainer.style.display = 'none';
+      }
+      
       // Mettre à jour les lignes d'articles
       const previewBody = el('previewBody');
       previewBody.innerHTML = '';
@@ -1137,6 +1164,8 @@
           city: el('city').value,
           tva: parseFloat(el('tva').value) || 0,
           currency: el('currency').value,
+          hasClientICE: el('hasClientICE').checked,
+          clientICE: el('clientICE').value,
           items: [],
           totals: invoiceData.totals,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1246,6 +1275,16 @@
         el('tva').value = invoice.tva || 20;
         el('currency').value = invoice.currency || 'MAD';
         
+        // Charger l'ICE client
+        if (invoice.hasClientICE) {
+          el('hasClientICE').checked = true;
+          el('clientICEContainer').style.display = 'block';
+          el('clientICE').value = invoice.clientICE || '';
+        } else {
+          el('hasClientICE').checked = false;
+          el('clientICEContainer').style.display = 'none';
+        }
+        
         // Vider et remplir les lignes d'articles
         tbody.innerHTML = '';
         if (invoice.items && invoice.items.length > 0) {
@@ -1294,6 +1333,18 @@
       // Ajouter une ligne d'article par défaut
       addLineItem();
       
+      // Gestion de l'ICE client
+      el('hasClientICE').addEventListener('change', function() {
+        const clientICEContainer = el('clientICEContainer');
+        if (this.checked) {
+          clientICEContainer.style.display = 'block';
+        } else {
+          clientICEContainer.style.display = 'none';
+          el('clientICE').value = '';
+        }
+        updatePreview();
+      });
+      
       // Mettre à jour l'aperçu initial
       updatePreview();
       
@@ -1316,6 +1367,9 @@
           el('city').value = '';
           el('tva').value = 20;
           el('currency').value = 'MAD';
+          el('hasClientICE').checked = false;
+          el('clientICEContainer').style.display = 'none';
+          el('clientICE').value = '';
           tbody.innerHTML = '';
           addLineItem();
           generateInvoiceNumber();
@@ -1324,7 +1378,7 @@
       });
       
       // Écouteurs pour les champs de formulaire
-      const formFields = ['invDate', 'client', 'vehicle', 'matricule', 'city', 'tva', 'currency'];
+      const formFields = ['invDate', 'client', 'vehicle', 'matricule', 'city', 'tva', 'currency', 'clientICE'];
       formFields.forEach(field => {
         el(field).addEventListener('input', updatePreview);
       });
@@ -1357,4 +1411,3 @@
   </script>
 </body>
 </html>
-
