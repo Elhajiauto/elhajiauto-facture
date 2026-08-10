@@ -879,6 +879,10 @@
               <input id="vehicle" placeholder="ex. VOLKSWAGEN TIGUAN" />
             </div>
             <div class="form-group">
+              <label for="kilometrage">Kilométrage (km)</label>
+              <input id="kilometrage" type="number" min="0" step="1" placeholder="ex. 125430" />
+            </div>
+            <div class="form-group">
               <label for="ice">ICE</label>
               <input id="ice" value="003720270000090" readonly style="background-color: #f1f5f9; color: #64748b;" />
             </div>
@@ -1015,6 +1019,7 @@
           <div class="info-box">
             <h3>Véhicule</h3>
             <div style="font-weight:500;" id="pVehicle">—</div>
+            <div>Kilométrage: <span id="pKilometrage">—</span> km</div>
           </div>
           <div class="info-box">
             <h3>Informations supplémentaires</h3>
@@ -1343,6 +1348,8 @@
       el('pCity').textContent = el('city').value;
       el('pClient').textContent = el('client').value;
       el('pVehicle').textContent = el('vehicle').value;
+      const kilometrage = el('kilometrage').value;
+      el('pKilometrage').textContent = kilometrage ? new Intl.NumberFormat('fr-FR').format(parseInt(kilometrage, 10)) : '—';
       el('pMatricule').textContent = el('matricule').value;
       el('pTVAperc').textContent = parseFloat(el('tva').value) || 0;
       el('pCurrency').textContent = el('currency').value;
@@ -1407,6 +1414,7 @@
           date: el('invDate').value,
           client: el('client').value,
           vehicle: el('vehicle').value,
+          kilometrage: el('kilometrage').value ? parseInt(el('kilometrage').value, 10) : null,
           matricule: el('matricule').value,
           city: el('city').value,
           tva: parseFloat(el('tva').value) || 0,
@@ -1517,6 +1525,7 @@
         el('invDate').value = invoice.date;
         el('client').value = invoice.client || '';
         el('vehicle').value = invoice.vehicle || '';
+        el('kilometrage').value = invoice.kilometrage != null ? invoice.kilometrage : '';
         el('matricule').value = invoice.matricule || '';
         el('city').value = invoice.city || '';
         el('tva').value = invoice.tva || 20;
