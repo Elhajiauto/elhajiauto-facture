@@ -1121,65 +1121,115 @@
     .checkbox-container input[type="checkbox"] { width: auto; transform: scale(1.2); accent-color: var(--primary); }
     .checkbox-container label { margin-bottom: 0; }
 
-    /* Print styles */
+    /* Print styles: keep the complete invoice on one A4 page, including on mobile */
     @media print {
-      @page { size: A4; margin: 12mm; }
-      html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
-      body { font-size: 11px !important; line-height: 1.35 !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+
+      html, body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        font-size: 11px !important;
+        line-height: 1.3 !important;
+      }
 
       #loginPage, #modeSelector, .mode-selector, .app-header,
       #builder, .modal, .logout-btn, .mode-switch-btn,
       .print-actions, .page-lead { display: none !important; }
 
       #mainContent, .main-content, .container {
-        display: block !important; max-width: none !important; width: auto !important;
-        margin: 0 !important; padding: 0 !important;
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
       .invoice {
-        display: block !important; width: 100% !important; max-width: none !important;
-        margin: 0 !important; padding: 0 !important; border: 0 !important;
-        border-radius: 0 !important; box-shadow: none !important; background: #fff !important;
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: #fff !important;
+        zoom: 1 !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
       }
 
       .invoice::before { display: none !important; }
 
       .invoice header {
-        display: flex !important; padding: 0 0 12px !important; margin: 0 0 14px !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+        gap: 14px !important;
+        padding: 0 0 9px !important;
+        margin: 0 0 10px !important;
         border-bottom: 1px solid #d1d5db !important;
-        flex-direction: column; align-items: center; text-align: center;
+        text-align: left !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
       }
 
-      .brand { width: 100%; justify-content: center; margin-bottom: 10px; }
-      .brand-text { text-align: center; }
-      .brand h1 { font-size: 20px; text-align: center; }
-      .muted { font-size: 11px; text-align: center; }
-      .right { text-align: center; width: 100%; }
-      .right > div:first-child { font-size: 20px !important; }
+      .brand { width: auto !important; justify-content: flex-start !important; margin: 0 !important; }
+      .brand-text { text-align: left !important; }
+      .brand h1 { font-size: 20px !important; text-align: left !important; margin-bottom: 4px !important; }
+      .muted { font-size: 9px !important; text-align: left !important; }
+      .right { text-align: right !important; width: auto !important; }
+      .right > div:first-child { font-size: 22px !important; }
+
+      .invoice > .client-info,
+      .invoice > h3.section-title,
+      .invoice > .table-container,
+      .invoice > .totals,
+      .invoice > .row,
+      .invoice > .invoice-footer {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
 
       .client-info {
         display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 12px; margin-bottom: 12px;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
       }
 
-      .info-box { padding: 10px; text-align: center; }
-      .info-box h3 { font-size: 11px; margin-bottom: 6px; }
-      .section-title { font-size: 14px; margin: 12px 0 8px 0; text-align: center; }
+      .info-box { padding: 8px !important; text-align: left !important; border-radius: 4px !important; }
+      .info-box h3 { font-size: 9px !important; margin-bottom: 4px !important; }
+      .section-title { font-size: 13px !important; margin: 10px 0 6px !important; padding-bottom: 4px !important; text-align: left !important; }
 
-      table { width: 100% !important; font-size: 11px; margin: 8px 0; }
-      th, td { padding: 6px 8px; }
-      .table-container { overflow: visible !important; }
+      .table-container { overflow: visible !important; margin: 8px 0 !important; }
+      table { width: 100% !important; font-size: 10px !important; margin: 5px 0 !important; border-collapse: collapse !important; }
+      th, td { padding: 5px 6px !important; font-size: 10px !important; }
+      tr { break-inside: avoid !important; page-break-inside: avoid !important; }
 
-      .totals { max-width: 300px; font-size: 11px; margin: 0 auto; }
-      .totals .row:last-child { font-size: 1.1em; }
+      .totals { max-width: 300px !important; font-size: 11px !important; margin: 8px 0 0 auto !important; padding-top: 6px !important; }
+      .totals .row { padding: 4px 0 !important; }
+      .totals .row:last-child { font-size: 1.1em !important; padding-top: 6px !important; }
+      .stamp { font-size: 10px !important; padding: 5px 8px !important; margin-top: 8px !important; }
+      .invoice-footer {
+        margin-top: 18px !important;
+        padding-top: 10px !important;
+        padding-bottom: 4px !important;
+        font-size: 9px !important;
+        line-height: 1.4 !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .invoice-footer strong { font-size: 11px !important; margin-bottom: 5px !important; }
 
-      .stamp { font-size: 11px; padding: 4px 8px; margin-top: 8px; }
-      .invoice-footer { margin-top: 24px !important; padding-top: 12px; font-size: 10px; }
-
-      tr { page-break-inside: avoid; }
-      .invoice > *:not(table) { page-break-inside: avoid; }
-      .invoice > * { margin-bottom: 8px; }
+      .invoice > * { margin-bottom: 6px !important; }
+      .invoice > *:not(table) { break-inside: avoid !important; page-break-inside: avoid !important; }
     }
 
     @media (max-width: 768px) {
