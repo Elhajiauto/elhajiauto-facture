@@ -1242,6 +1242,116 @@
       .btn { width: 100%; justify-content: center; }
       .invoices-grid { grid-template-columns: 1fr; }
     }
+
+    /* ============ CREDIT MANAGEMENT (independent module) ============ */
+    .credit-card { border-color: rgba(22,163,74,.35); }
+    .credit-card .mode-icon { background: rgba(22,163,74,.14); color: #4ade80; }
+    .credit-card:hover .mode-action { color: #4ade80; }
+    .credit-page { display:none; min-height:100vh; background:var(--paper); }
+    .credit-topbar { background:var(--sidebar); color:#fff; padding:18px 4%; display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:3px solid var(--success); }
+    .credit-topbar h1 { font:700 21px var(--font-display); }
+    .credit-topbar p { color:#aeb7c5; font-size:12px; margin-top:4px; }
+    .credit-wrap { max-width:1180px; margin:28px auto; padding:0 20px 40px; }
+    .credit-toolbar { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:20px; }
+    .credit-toolbar h2 { font:700 24px var(--font-display); color:var(--ink); }
+    .credit-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-bottom:20px; }
+    .credit-stat,.credit-form-card,.credit-list-card { background:#fff; border:1px solid var(--border); border-radius:14px; padding:20px; box-shadow:0 3px 12px var(--shadow); }
+    .credit-stat span { color:var(--muted); font-size:13px; }
+    .credit-stat strong { display:block; margin-top:8px; font:700 22px var(--font-display); color:var(--ink); }
+    .credit-layout { display:grid; grid-template-columns:minmax(280px, .85fr) minmax(0,1.5fr); gap:18px; align-items:start; }
+    .credit-form-card h3,.credit-list-card h3 { font:700 17px var(--font-display); margin-bottom:16px; }
+    .credit-form-card .form-group { margin-bottom:13px; }
+    .credit-detail-list { display:flex; flex-direction:column; gap:9px; margin:10px 0 12px; }
+    .credit-detail-row { display:grid; grid-template-columns:minmax(0,1fr) 112px 36px; gap:7px; align-items:center; }
+    .credit-detail-row input { min-width:0; width:100%; }
+    .credit-detail-row button { height:40px; border:1px solid var(--border); border-radius:8px; background:#fff; color:var(--danger); cursor:pointer; font-size:18px; }
+    .credit-add-detail { width:100%; justify-content:center; margin-bottom:14px; }
+    .credit-form-card input,.credit-list-card input { width:100%; }
+    .credit-list-head { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:14px; }
+    .credit-list-head input { max-width:280px; }
+    .credit-item { border:1px solid var(--border); border-radius:12px; padding:15px; margin-bottom:11px; background:#fff; }
+    .credit-item-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .credit-item h4 { font-size:15px; color:var(--ink); margin-bottom:4px; }
+    .credit-meta { color:var(--muted); font-size:12px; line-height:1.6; }
+    .credit-balance { font:700 16px var(--font-display); color:var(--danger); white-space:nowrap; }
+    .credit-item-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+    .credit-item-actions button { border:1px solid var(--border); background:#f8fafc; padding:8px 11px; border-radius:8px; cursor:pointer; font-weight:600; }
+    .credit-item-actions button.pay { background:var(--success-soft); color:#166534; border-color:#bbf7d0; }
+    .credit-empty { text-align:center; padding:30px 10px; color:var(--muted); }
+    .credit-history { margin-top:12px; padding-top:10px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); }
+    .credit-history div { display:flex; justify-content:space-between; gap:8px; padding:4px 0; }
+    @media(max-width:800px) { .credit-layout {grid-template-columns:1fr;} .credit-stats {grid-template-columns:1fr;} .credit-list-head {align-items:stretch; flex-direction:column;} .credit-list-head input {max-width:none;} }
+
+
+    /* Modern credit workspace refresh */
+    .credit-page { background:linear-gradient(180deg,#f4f7fb 0%,#eef2f7 100%); color:#172033; }
+    .credit-topbar { padding:20px clamp(18px,4vw,56px); background:linear-gradient(115deg,#111827 0%,#172554 58%,#14532d 130%); border-bottom:0; box-shadow:0 8px 28px rgba(15,23,42,.16); }
+    .credit-topbar h1 { font-size:clamp(19px,2vw,25px); letter-spacing:-.04em; }
+    .credit-topbar p { color:#cbd5e1; }
+    .credit-topbar .btn { border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.1); color:#fff; border-radius:10px; padding:10px 14px; }
+    .credit-topbar .btn:hover { background:rgba(255,255,255,.18); }
+    .credit-wrap { max-width:1440px; margin:0 auto; padding:30px clamp(14px,3vw,38px) 54px; }
+    .credit-toolbar { margin-bottom:22px; }
+    .credit-toolbar .eyebrow { color:#15803d; font-weight:800; letter-spacing:.13em; font-size:10px; text-transform:uppercase; }
+    .credit-toolbar h2 { font-size:clamp(24px,3vw,32px); letter-spacing:-.045em; margin-top:3px; }
+    .credit-stats { gap:16px; }
+    .credit-stat { position:relative; overflow:hidden; padding:21px 22px; border:1px solid #e5eaf2; border-radius:17px; box-shadow:0 7px 22px rgba(15,23,42,.045); }
+    .credit-stat:after { content:""; position:absolute; width:92px; height:92px; border-radius:50%; right:-30px; top:-38px; background:rgba(37,99,235,.055); }
+    .credit-stat:nth-child(2):after { background:rgba(22,163,74,.07); }
+    .credit-stat:nth-child(3):after { background:rgba(220,38,38,.065); }
+    .credit-stat span { font-size:12px; font-weight:700; color:#64748b; }
+    .credit-stat strong { font-size:clamp(19px,2vw,25px); letter-spacing:-.035em; margin-top:9px; }
+    .credit-layout { grid-template-columns:minmax(300px,.78fr) minmax(0,1.55fr); gap:20px; }
+    .credit-form-card,.credit-list-card { border:1px solid #e5eaf2; border-radius:18px; padding:22px; box-shadow:0 8px 28px rgba(15,23,42,.05); }
+    .credit-form-card { position:sticky; top:18px; }
+    .credit-form-card h3,.credit-list-card h3 { font-size:18px; letter-spacing:-.025em; margin-bottom:18px; }
+    .credit-form-card .form-group label { font-size:12px; font-weight:750; color:#475569; }
+    .credit-form-card input,.credit-list-card input,.credit-edit-modal input { border:1px solid #dbe3ee; border-radius:10px; padding:11px 12px; background:#f8fafc; color:#0f172a; font:500 14px var(--font-body); transition:border-color .15s,box-shadow .15s,background .15s; }
+    .credit-form-card input:focus,.credit-list-card input:focus,.credit-edit-modal input:focus { outline:0; border-color:#2563eb; background:#fff; box-shadow:0 0 0 3px rgba(37,99,235,.11); }
+    .credit-form-card input[readonly],.credit-edit-modal input[readonly] { background:#eff6ff; color:#1d4ed8; font-weight:800; }
+    .credit-detail-row { grid-template-columns:minmax(0,1fr) 105px 36px; gap:8px; }
+    .credit-detail-row button { border-radius:10px; background:#fff7f7; border-color:#fee2e2; }
+    .credit-add-detail { border-radius:10px; border:1px dashed #86a6e8; background:#eff6ff; color:#1d4ed8; font-weight:750; }
+    .credit-add-detail:hover { background:#dbeafe; }
+    .credit-form-card .btn.primary { border-radius:11px; padding:13px 16px; font-weight:800; box-shadow:0 7px 15px rgba(37,99,235,.18); }
+    .credit-list-head { align-items:center; padding-bottom:14px; border-bottom:1px solid #edf1f6; }
+    .credit-list-head h3 { margin:0; }
+    .credit-list-head input { max-width:310px; padding-left:38px; background:#f8fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E") no-repeat 12px center; }
+    .credit-item { padding:17px; border:1px solid #e7ecf3; border-radius:15px; margin:13px 0 0; box-shadow:0 3px 12px rgba(15,23,42,.035); transition:transform .15s,border-color .15s,box-shadow .15s; }
+    .credit-item:hover { transform:translateY(-1px); border-color:#cbd5e1; box-shadow:0 8px 20px rgba(15,23,42,.065); }
+    .credit-item h4 { font-size:16px; font-weight:800; letter-spacing:-.02em; }
+    .credit-meta { color:#64748b; }
+    .credit-balance { color:#b91c1c; font-size:17px; }
+    .credit-status { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:4px 9px; font-size:10px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; background:#fff7ed; color:#c2410c; }
+    .credit-status:before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
+    .credit-status.settled { background:#ecfdf5; color:#15803d; }
+    .credit-item-actions { gap:7px; margin-top:14px; }
+    .credit-item-actions button { border-radius:9px; padding:8px 11px; font-size:12px; color:#334155; background:#f8fafc; }
+    .credit-item-actions button:hover { background:#eef2f7; }
+    .credit-item-actions button.pay { background:#ecfdf5; color:#15803d; border-color:#bbf7d0; }
+    .credit-item-actions button.edit { background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; }
+    .credit-item-actions button.delete { color:#b91c1c; background:#fff7f7; border-color:#fee2e2; }
+    .credit-history { color:#64748b; }
+    .credit-empty { padding:48px 14px; border:1px dashed #cbd5e1; border-radius:14px; background:#f8fafc; margin-top:14px; }
+    .credit-edit-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(15,23,42,.58); backdrop-filter:blur(5px); padding:20px; align-items:center; justify-content:center; }
+    .credit-edit-overlay.open { display:flex; }
+    .credit-edit-modal { width:min(620px,100%); max-height:min(90vh,850px); overflow:auto; background:#fff; border-radius:20px; box-shadow:0 25px 80px rgba(0,0,0,.25); padding:24px; }
+    .credit-edit-head { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:20px; }
+    .credit-edit-head h3 { font:700 21px var(--font-display); color:#0f172a; }
+    .credit-edit-head p { font-size:12px; color:#64748b; margin-top:4px; }
+    .credit-edit-close { border:0; background:#f1f5f9; color:#475569; border-radius:10px; width:36px; height:36px; font-size:21px; cursor:pointer; }
+    .credit-edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
+    .credit-edit-modal .form-group { margin-bottom:13px; }
+    .credit-edit-modal label { display:block; font-size:12px; font-weight:750; color:#475569; margin-bottom:6px; }
+    .credit-edit-modal .credit-detail-row { margin-bottom:8px; }
+    .credit-edit-actions { display:flex; justify-content:flex-end; gap:9px; padding-top:15px; border-top:1px solid #edf1f6; margin-top:16px; }
+    .credit-edit-actions button { border:0; border-radius:10px; padding:11px 16px; font-weight:750; cursor:pointer; }
+    .credit-edit-actions .cancel { background:#f1f5f9; color:#334155; }
+    .credit-edit-actions .save { background:#1d4ed8; color:#fff; }
+    .credit-edit-message { min-height:18px; font-size:12px; color:#b91c1c; margin-top:8px; }
+    @media(max-width:900px) { .credit-layout {grid-template-columns:1fr;} .credit-form-card {position:static;} }
+    @media(max-width:600px) { .credit-topbar {align-items:flex-start; flex-direction:column;} .credit-topbar>div:last-child {width:100%;} .credit-topbar .btn {flex:1;} .credit-wrap {padding:20px 12px 36px;} .credit-stats {grid-template-columns:1fr; gap:10px;} .credit-stat {padding:16px 18px;} .credit-form-card,.credit-list-card {padding:16px;} .credit-list-head {align-items:stretch; flex-direction:column;} .credit-list-head input {max-width:none;} .credit-item-top {flex-direction:column;} .credit-balance {font-size:18px;} .credit-edit-grid {grid-template-columns:1fr;} .credit-edit-modal {padding:18px;} .credit-item-actions button {flex:1;} }
+
   </style>
 </head>
 <body>
@@ -1296,7 +1406,7 @@
       <div class="mode-title">
         <div class="eyebrow">Atelier &middot; Tanger</div>
         <h2>Que souhaitez-vous créer ?</h2>
-        <p>Choisissez le type de document. Les mêmes informations client, véhicule et prestations restent disponibles dans les deux espaces.</p>
+        <p>Choisissez un espace de gestion. Les factures, les devis et les crédits sont enregistrés séparément.</p>
       </div>
 
       <div class="mode-grid">
@@ -1323,9 +1433,78 @@
           <p>Préparez une estimation claire des travaux et du coût avant l'intervention sur le véhicule.</p>
           <span class="mode-action">Accéder aux devis <span>→</span></span>
         </button>
+
+        <button type="button" class="mode-card credit-card" id="chooseCredit">
+          <span class="mode-badge">Espace indépendant</span>
+          <div class="mode-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
+          </div>
+          <h3>Crédit client</h3>
+          <p>Enregistrez les dettes, les avances et chaque paiement des clients dans un espace séparé.</p>
+          <span class="mode-action">Accéder aux crédits <span>→</span></span>
+        </button>
       </div>
     </div>
   </div>
+
+  <!-- Espace Crédit autonome : collection Firestore "credits" -->
+  <section id="creditPage" class="credit-page">
+    <header class="credit-topbar">
+      <div><h1>EL HAJI AUTO · Gestion des crédits</h1><p>Suivi indépendant des dettes et paiements clients</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn" id="creditBackBtn">⇦ Menu principal</button>
+        <button type="button" class="btn danger" id="creditLogoutBtn">Déconnexion</button>
+      </div>
+    </header>
+    <div class="credit-wrap">
+      <div class="credit-toolbar"><div><div class="eyebrow">Atelier · Tanger</div><h2>Suivi des crédits clients</h2></div></div>
+      <div class="credit-stats">
+        <div class="credit-stat"><span>Total des crédits enregistrés</span><strong id="creditTotal">0,00 MAD</strong></div>
+        <div class="credit-stat"><span>Total déjà encaissé</span><strong id="creditPaid">0,00 MAD</strong></div>
+        <div class="credit-stat"><span>Reste à récupérer</span><strong id="creditRemaining">0,00 MAD</strong></div>
+      </div>
+      <div class="credit-layout">
+        <form class="credit-form-card" id="creditForm">
+          <h3>＋ Nouveau crédit</h3>
+          <div class="form-group"><label for="creditClient">Nom du client *</label><input id="creditClient" required maxlength="120" placeholder="Nom complet"></div>
+          <div class="form-group"><label for="creditPhone">Téléphone</label><input id="creditPhone" maxlength="30" placeholder="06... / 07..."></div>
+          <div class="form-group">
+            <label>Détail / Motif — chaque article avec son prix *</label>
+            <div id="creditDetailsList" class="credit-detail-list"><div class="credit-detail-row">
+              <input type="text" class="credit-detail-name" maxlength="160" placeholder="Ex. Filtre à huile" aria-label="Détail ou motif">
+              <input type="number" class="credit-detail-price" min="0.01" step="0.01" placeholder="Prix" aria-label="Prix en MAD">
+              <button type="button" class="credit-remove-detail" title="Supprimer la ligne" aria-label="Supprimer">×</button>
+            </div></div>
+            <button type="button" class="btn credit-add-detail" id="addCreditDetail">＋ Ajouter un détail</button>
+          </div>
+          <div class="form-group"><label for="creditAmount">Montant total calculé (MAD) *</label><input id="creditAmount" type="number" min="0.01" step="0.01" required placeholder="0.00" readonly></div>
+          <div class="form-group"><label for="creditInitialPaid">Avance déjà payée (MAD)</label><input id="creditInitialPaid" type="number" min="0" step="0.01" value="0"></div>
+          <div class="form-group"><label for="creditDate">Date</label><input id="creditDate" type="date" required></div>
+          <button class="btn primary" type="submit" style="width:100%;justify-content:center">Enregistrer le crédit</button>
+          <p id="creditFormMessage" class="muted" style="margin-top:10px" aria-live="polite"></p>
+        </form>
+        <div class="credit-list-card">
+          <div class="credit-list-head"><h3>Liste des crédits</h3><input id="creditSearch" placeholder="Rechercher un client..."></div>
+          <div id="creditList"><div class="credit-empty">Chargement des crédits...</div></div>
+        </div>
+      </div>
+    </div>
+    <div id="creditEditOverlay" class="credit-edit-overlay" role="dialog" aria-modal="true" aria-labelledby="creditEditTitle">
+      <form id="creditEditForm" class="credit-edit-modal">
+        <div class="credit-edit-head"><div><h3 id="creditEditTitle">Modifier le crédit</h3><p>Modifiez les informations du client et les détails de son crédit.</p></div><button type="button" class="credit-edit-close" id="creditEditClose" aria-label="Fermer">×</button></div>
+        <input type="hidden" id="creditEditId">
+        <div class="credit-edit-grid">
+          <div class="form-group"><label for="creditEditClient">Nom du client *</label><input id="creditEditClient" required maxlength="120"></div>
+          <div class="form-group"><label for="creditEditPhone">Téléphone</label><input id="creditEditPhone" maxlength="30"></div>
+          <div class="form-group"><label for="creditEditDate">Date</label><input id="creditEditDate" type="date" required></div>
+          <div class="form-group"><label for="creditEditAmount">Montant total (MAD)</label><input id="creditEditAmount" readonly></div>
+        </div>
+        <div class="form-group"><label>Détails / Motifs et prix</label><div id="creditEditDetails" class="credit-detail-list"></div><button type="button" class="btn credit-add-detail" id="creditEditAddDetail">＋ Ajouter un détail</button></div>
+        <p id="creditEditMessage" class="credit-edit-message" aria-live="polite"></p>
+        <div class="credit-edit-actions"><button type="button" class="cancel" id="creditEditCancel">Annuler</button><button type="submit" class="save" id="creditEditSave">Enregistrer les modifications</button></div>
+      </form>
+    </div>
+  </section>
 
   <!-- Contenu Principal (caché initialement) -->
   <div id="mainContent" class="main-content">
@@ -1752,12 +1931,14 @@
         console.log("Utilisateur connecté:", user.email);
         loginPage.style.display = 'none';
         mainContent.style.display = 'none';
+        el('creditPage').style.display = 'none';
         modeSelector.style.display = 'flex';
         modeUser.textContent = user.email || '';
       } else {
         loginPage.style.display = 'flex';
         modeSelector.style.display = 'none';
         mainContent.style.display = 'none';
+        el('creditPage').style.display = 'none';
         appInitialized = false;
       }
     });
@@ -1831,6 +2012,134 @@
     
     // Utility functions
     const el = id => document.getElementById(id);
+
+    // ===== MODULE CRÉDIT INDÉPENDANT (Firestore: credits) =====
+    let creditCache = [];
+    const moneyMAD = value => new Intl.NumberFormat('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2}).format(Number(value || 0)) + ' MAD';
+    const safeText = value => String(value ?? '').replace(/[&<>\"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch]));
+    function openCreditMode() {
+      modeSelector.style.display = 'none';
+      mainContent.style.display = 'none';
+      el('creditPage').style.display = 'block';
+      el('creditDate').value = new Date().toISOString().slice(0,10);
+      loadCredits();
+    }
+    async function loadCredits() {
+      const list = el('creditList');
+      list.innerHTML = '<div class="credit-empty">Chargement...</div>';
+      try {
+        const snap = await db.collection('credits').orderBy('createdAt','desc').get();
+        creditCache = snap.docs.map(doc => ({id:doc.id, ...doc.data()}));
+        renderCredits();
+      } catch (err) { console.error('Load credits:', err); list.innerHTML = '<div class="credit-empty">Erreur de chargement. Vérifiez les règles Firestore et la connexion.</div>'; }
+    }
+    function renderCredits() {
+      const q = (el('creditSearch').value || '').trim().toLowerCase();
+      const filtered = creditCache.filter(c => [c.client,c.phone,c.description,(c.details||[]).map(d=>d.name).join(' ')].join(' ').toLowerCase().includes(q));
+      const total = creditCache.reduce((a,c)=>a+Number(c.amount||0),0);
+      const paid = creditCache.reduce((a,c)=>a+Number(c.paid||0),0);
+      el('creditTotal').textContent = moneyMAD(total); el('creditPaid').textContent = moneyMAD(paid); el('creditRemaining').textContent = moneyMAD(total-paid);
+      if (!filtered.length) { el('creditList').innerHTML = '<div class="credit-empty">Aucun crédit trouvé.</div>'; return; }
+      el('creditList').innerHTML = filtered.map(c => {
+        const remaining = Math.max(0, Number(c.amount||0)-Number(c.paid||0));
+        const payments = Array.isArray(c.payments) ? c.payments : [];
+        const details = Array.isArray(c.details) ? c.details : [];
+        const detailsHtml = details.length ? `<div class="credit-history" style="display:block"><b>Détails :</b>${details.map(d=>`<div><span>${safeText(d.name)}</span><b>${moneyMAD(d.price)}</b></div>`).join('')}</div>` : `<div class="credit-meta">${safeText(c.description||'Crédit client')}</div>`;
+        return `<article class="credit-item"><div class="credit-item-top"><div><h4>${safeText(c.client)}</h4><div class="credit-meta">${safeText(c.phone||'Sans téléphone')} · ${safeText(c.date||'')}</div>${detailsHtml}</div><div><div class="credit-balance">${moneyMAD(remaining)}</div><span class="credit-status ${remaining<=0?'settled':''}">${remaining<=0?'Soldé':'En cours'}</span></div></div><div class="credit-meta" style="margin-top:10px">Total : <b>${moneyMAD(c.amount)}</b> · Payé : <b>${moneyMAD(c.paid)}</b></div><div class="credit-item-actions">${remaining>0?`<button class="pay" data-pay-credit="${c.id}">＋ Ajouter paiement</button>`:''}<button class="edit" data-edit-credit="${c.id}">✎ Modifier</button><button data-history-credit="${c.id}">Historique (${payments.length})</button><button class="delete" data-delete-credit="${c.id}">Supprimer</button></div><div class="credit-history" id="creditHistory-${c.id}" style="display:none">${payments.length?payments.map(p=>`<div><span>${safeText(p.date||'')} · ${safeText(p.note||'Paiement')}</span><b>${moneyMAD(p.amount)}</b></div>`).join(''):'Aucun paiement enregistré.'}</div></article>`;
+      }).join('');
+      el('creditList').querySelectorAll('[data-pay-credit]').forEach(b=>b.addEventListener('click',()=>addCreditPayment(b.dataset.payCredit)));
+      el('creditList').querySelectorAll('[data-history-credit]').forEach(b=>b.addEventListener('click',()=>{const h=el('creditHistory-'+b.dataset.historyCredit);h.style.display=h.style.display==='none'?'block':'none';}));
+      el('creditList').querySelectorAll('[data-delete-credit]').forEach(b=>b.addEventListener('click',()=>deleteCredit(b.dataset.deleteCredit)));
+      el('creditList').querySelectorAll('[data-edit-credit]').forEach(b=>b.addEventListener('click',()=>openEditCredit(b.dataset.editCredit)));
+    }
+    function addCreditDetailRow(name='', price='') {
+      const row=document.createElement('div'); row.className='credit-detail-row';
+      row.innerHTML='<input type="text" class="credit-detail-name" maxlength="160" placeholder="Ex. Filtre à huile" aria-label="Détail ou motif"><input type="number" class="credit-detail-price" min="0.01" step="0.01" placeholder="Prix" aria-label="Prix en MAD"><button type="button" class="credit-remove-detail" title="Supprimer la ligne" aria-label="Supprimer">×</button>';
+      row.querySelector('.credit-detail-name').value=name; row.querySelector('.credit-detail-price').value=price;
+      el('creditDetailsList').appendChild(row);
+      row.querySelectorAll('input').forEach(input=>input.addEventListener('input',updateCreditAmount));
+      row.querySelector('.credit-remove-detail').addEventListener('click',()=>{if(el('creditDetailsList').children.length>1)row.remove();else row.querySelectorAll('input').forEach(input=>input.value='');updateCreditAmount();});
+    }
+    function updateCreditAmount() {
+      const total=Array.from(el('creditDetailsList').querySelectorAll('.credit-detail-price')).reduce((sum,input)=>sum+(Number(input.value)||0),0);
+      el('creditAmount').value=total ? total.toFixed(2) : '';
+    }
+    el('addCreditDetail').addEventListener('click',()=>addCreditDetailRow());
+    el('creditDetailsList').querySelectorAll('input').forEach(input=>input.addEventListener('input',updateCreditAmount));
+    el('creditDetailsList').querySelector('.credit-remove-detail').addEventListener('click',()=>{el('creditDetailsList').firstElementChild.querySelectorAll('input').forEach(input=>input.value='');updateCreditAmount();});
+    function creditSaveError(err) {
+      const code=err && err.code ? err.code : 'unknown'; const message=err && err.message ? err.message : String(err||'Erreur inconnue');
+      if (code==='permission-denied') return 'Accès refusé par Firestore (permission-denied). Autorisez la collection credits dans les règles Firestore.';
+      if (code==='unauthenticated') return 'Session expirée : reconnectez-vous puis réessayez.';
+      return 'Erreur Firestore ('+code+') : '+message;
+    }
+    el('creditForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const rows=Array.from(el('creditDetailsList').querySelectorAll('.credit-detail-row'));
+      const details=rows.map(row=>({name:row.querySelector('.credit-detail-name').value.trim(),price:Number(row.querySelector('.credit-detail-price').value)}));
+      const amount=details.reduce((sum,d)=>sum+(Number.isFinite(d.price)?d.price:0),0);
+      const initial=Number(el('creditInitialPaid').value||0);
+      if (!details.length || details.some(d=>!d.name || !Number.isFinite(d.price) || d.price<=0)) {el('creditFormMessage').textContent='Remplissez le détail et le prix de chaque ligne.';return;}
+      if (amount<=0 || initial<0 || initial>amount) {el('creditFormMessage').textContent='Vérifiez les montants : l’avance doit être entre 0 et le montant total.';return;}
+      if (!auth.currentUser) {el('creditFormMessage').textContent='Session expirée. Reconnectez-vous.';return;}
+      const btn=el('creditForm').querySelector('button[type=submit]'); btn.disabled=true; el('creditFormMessage').textContent='Enregistrement...';
+      try {
+        const payments=initial>0?[{amount:initial,date:el('creditDate').value,note:'Avance initiale',createdAt:Date.now()}]:[];
+        await db.collection('credits').add({client:el('creditClient').value.trim(),phone:el('creditPhone').value.trim(),description:details.map(d=>d.name).join(', '),details,amount,paid:initial,date:el('creditDate').value,payments,userId:auth.currentUser.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        el('creditForm').reset(); el('creditDetailsList').innerHTML=''; addCreditDetailRow(); el('creditDate').value=new Date().toISOString().slice(0,10); el('creditInitialPaid').value='0'; el('creditFormMessage').textContent='Crédit enregistré avec succès.'; await loadCredits();
+      } catch(err) {console.error('Save credit failed:',err);el('creditFormMessage').textContent=creditSaveError(err);} finally {btn.disabled=false;}
+    });
+    function addEditCreditDetailRow(name='', price='') {
+      const row=document.createElement('div'); row.className='credit-detail-row';
+      row.innerHTML='<input type="text" class="credit-edit-detail-name" maxlength="160" placeholder="Ex. Filtre à huile" aria-label="Détail ou motif"><input type="number" class="credit-edit-detail-price" min="0.01" step="0.01" placeholder="Prix" aria-label="Prix en MAD"><button type="button" class="credit-remove-detail" title="Supprimer la ligne" aria-label="Supprimer">×</button>';
+      row.querySelector('.credit-edit-detail-name').value=name; row.querySelector('.credit-edit-detail-price').value=price;
+      el('creditEditDetails').appendChild(row);
+      row.querySelectorAll('input').forEach(input=>input.addEventListener('input',updateEditCreditAmount));
+      row.querySelector('.credit-remove-detail').addEventListener('click',()=>{if(el('creditEditDetails').children.length>1)row.remove();else row.querySelectorAll('input').forEach(input=>input.value='');updateEditCreditAmount();});
+    }
+    function updateEditCreditAmount() {
+      const total=Array.from(el('creditEditDetails').querySelectorAll('.credit-edit-detail-price')).reduce((sum,input)=>sum+(Number(input.value)||0),0);
+      el('creditEditAmount').value=total.toFixed(2);
+    }
+    function openEditCredit(id) {
+      const credit=creditCache.find(c=>c.id===id); if(!credit)return;
+      el('creditEditId').value=id; el('creditEditClient').value=credit.client||''; el('creditEditPhone').value=credit.phone||'';
+      el('creditEditDate').value=credit.date||new Date().toISOString().slice(0,10);
+      el('creditEditDetails').innerHTML='';
+      const details=Array.isArray(credit.details)&&credit.details.length?credit.details:[{name:credit.description||'Crédit client',price:Number(credit.amount||0)}];
+      details.forEach(d=>addEditCreditDetailRow(d.name||'',d.price??'')); updateEditCreditAmount();
+      el('creditEditMessage').textContent=''; el('creditEditOverlay').classList.add('open'); document.body.style.overflow='hidden';
+      setTimeout(()=>el('creditEditClient').focus(),30);
+    }
+    function closeEditCredit() { el('creditEditOverlay').classList.remove('open'); document.body.style.overflow=''; }
+    el('creditEditAddDetail').addEventListener('click',()=>addEditCreditDetailRow());
+    el('creditEditClose').addEventListener('click',closeEditCredit); el('creditEditCancel').addEventListener('click',closeEditCredit);
+    el('creditEditOverlay').addEventListener('click',e=>{if(e.target===el('creditEditOverlay'))closeEditCredit();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&el('creditEditOverlay').classList.contains('open'))closeEditCredit();});
+    el('creditEditForm').addEventListener('submit',async e=>{
+      e.preventDefault(); const id=el('creditEditId').value; const credit=creditCache.find(c=>c.id===id); if(!credit)return;
+      const details=Array.from(el('creditEditDetails').querySelectorAll('.credit-detail-row')).map(row=>({name:row.querySelector('.credit-edit-detail-name').value.trim(),price:Number(row.querySelector('.credit-edit-detail-price').value)}));
+      const amount=details.reduce((sum,d)=>sum+(Number.isFinite(d.price)?d.price:0),0); const paid=Number(credit.paid||0);
+      if(!el('creditEditClient').value.trim()||!details.length||details.some(d=>!d.name||!Number.isFinite(d.price)||d.price<=0)){el('creditEditMessage').textContent='Remplissez le nom du client, le détail et le prix de chaque ligne.';return;}
+      if(amount<paid){el('creditEditMessage').textContent='Le nouveau total ne peut pas être inférieur au montant déjà payé ('+moneyMAD(paid)+').';return;}
+      const save=el('creditEditSave'); save.disabled=true; save.textContent='Enregistrement...'; el('creditEditMessage').textContent='';
+      try {
+        await db.collection('credits').doc(id).update({client:el('creditEditClient').value.trim(),phone:el('creditEditPhone').value.trim(),date:el('creditEditDate').value,details,description:details.map(d=>d.name).join(', '),amount,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        closeEditCredit(); await loadCredits();
+      } catch(err) {console.error('Update credit failed:',err);el('creditEditMessage').textContent=creditSaveError(err);}
+      finally {save.disabled=false;save.textContent='Enregistrer les modifications';}
+    });
+
+    async function addCreditPayment(id) {
+      const raw=prompt('Montant du paiement en MAD :'); if(raw===null)return; const amount=Number(raw.replace(',','.')); if(!Number.isFinite(amount)||amount<=0){alert('Montant invalide.');return;}
+      const note=prompt('Note (facultatif) :','Paiement client')||'Paiement client'; const ref=db.collection('credits').doc(id);
+      try { await db.runTransaction(async tx=>{const snap=await tx.get(ref);if(!snap.exists)throw new Error('Crédit introuvable');const d=snap.data();const remaining=Number(d.amount||0)-Number(d.paid||0);if(amount>remaining)throw new Error('Le paiement dépasse le reste dû ('+moneyMAD(remaining)+').');const payments=Array.isArray(d.payments)?d.payments.slice():[];payments.push({amount,date:new Date().toISOString().slice(0,10),note,createdAt:Date.now()});tx.update(ref,{paid:Number(d.paid||0)+amount,payments,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});}); await loadCredits(); } catch(err){alert(err.message||'Impossible d’enregistrer le paiement.');}
+    }
+    async function deleteCredit(id) { if(!confirm('Supprimer ce crédit et son historique de paiements ? Cette action est définitive.'))return; try{await db.collection('credits').doc(id).delete();await loadCredits();}catch(err){alert('Suppression impossible. Vérifiez les règles Firestore.');} }
+    el('creditSearch').addEventListener('input',renderCredits);
+    document.getElementById('chooseCredit').addEventListener('click',openCreditMode);
+    el('creditBackBtn').addEventListener('click',()=>{el('creditPage').style.display='none';modeSelector.style.display='flex';});
+    el('creditLogoutBtn').addEventListener('click',()=>auth.signOut());
     
     // Fonction de formatage des nombres corrigée
     const fmt = (n, currency) => {
